@@ -1,11 +1,8 @@
 import Dashboard from "./components/Dashboard";
-import MemberCard from "./components/MemberCard";
-import TaskList from "./components/TaskList";
 
 export default function Home() {
   return (
-    <div className="p-6 space-y-10 min-h-screen">
-      {/* Page header */}
+    <div className="p-6 space-y-6 min-h-screen">
       <header>
         <h1 className="text-3xl font-bold text-white tracking-tight">
           Välkommen,{" "}
@@ -19,20 +16,7 @@ export default function Home() {
         </p>
       </header>
 
-      {/* Dashboard overview */}
-      <section id="dashboard">
-        <Dashboard />
-      </section>
-
-      {/* Family members */}
-      <section id="members">
-        <MemberCard />
-      </section>
-
-      {/* Task list */}
-      <section id="tasks">
-        <TaskList />
-      </section>
+      <Dashboard />
     </div>
   );
 }
