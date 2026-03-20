@@ -5,7 +5,7 @@ import {
   colorMap,
   badgeColorMap,
   type FamilyMember,
-} from "@/lib/mockData";
+} from "../lib/mockData";
 
 function MemberCard({ member }: { member: FamilyMember }) {
   const colorClasses = colorMap[member.color] ?? colorMap["indigo"];

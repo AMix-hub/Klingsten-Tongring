@@ -5,7 +5,7 @@ import {
   reminders,
   lunaFeeder,
   familyMembers,
-} from "@/lib/mockData";
+} from "../lib/mockData";
 import { Bell, ChefHat, Cat, Calendar } from "lucide-react";
 
 const DAYS_SV = [
