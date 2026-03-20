@@ -33,13 +33,13 @@ För att ändringar ska synas på **alla** familjemedlemmars enheter (mamma, pap
    ```bash
    cp .env.local.example .env.local
    ```
-   Fyll i värdena från steg 3:
+   Fyll i värdena från steg 3. Observera att `databaseURL` **inte** ingår i `firebaseConfig`-objektet – du hittar den i Firebase Console under **Build → Realtime Database → Data** (visas längst upp på sidan):
    ```
-   NEXT_PUBLIC_FIREBASE_API_KEY=...
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
+   NEXT_PUBLIC_FIREBASE_API_KEY=...          # apiKey från firebaseConfig
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...      # authDomain från firebaseConfig
    NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://<projekt-id>-default-rtdb.europe-west1.firebasedatabase.app
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
-   NEXT_PUBLIC_FIREBASE_APP_ID=...
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=...       # projectId från firebaseConfig
+   NEXT_PUBLIC_FIREBASE_APP_ID=...           # appId från firebaseConfig
    ```
 
 5. **Starta om servern** – `npm run dev`
