@@ -9,6 +9,7 @@ import {
   type MealPlan,
   type Reminder,
 } from "../lib/mockData";
+import { useLocalStorage } from "../lib/useLocalStorage";
 import { Bell, ChefHat, Cat, Calendar, Plus, Pencil, Trash2, X } from "lucide-react";
 
 const DAYS_SV = [
@@ -44,9 +45,9 @@ function emptyReminder(): ReminderForm {
 export default function Dashboard() {
   const todayName = getTodayName();
 
-  const [meals, setMeals] = useState<MealPlan[]>(initialMealPlan);
-  const [reminders, setReminders] = useState<Reminder[]>(initialReminders);
-  const [lunaFeeder, setLunaFeeder] = useState<Record<string, string>>(initialLunaFeeder);
+  const [meals, setMeals] = useLocalStorage<MealPlan[]>("mealPlan", initialMealPlan);
+  const [reminders, setReminders] = useLocalStorage<Reminder[]>("reminders", initialReminders);
+  const [lunaFeeder, setLunaFeeder] = useLocalStorage<Record<string, string>>("lunaFeeder", initialLunaFeeder);
 
   // Reminder modal state
   const [reminderModal, setReminderModal] = useState<string | "new" | null>(null);

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { todayTasks, familyMembers, type Task } from "../lib/mockData";
+import { useLocalStorage } from "../lib/useLocalStorage";
 import { CheckCircle2, Circle, Clock, AlertCircle, Plus, Pencil, Trash2, X } from "lucide-react";
 
 type TaskForm = Omit<Task, "id">;
@@ -39,7 +40,7 @@ function getMemberName(id: string): string {
 }
 
 export default function TaskList() {
-  const [tasks, setTasks] = useState<Task[]>(todayTasks);
+  const [tasks, setTasks] = useLocalStorage<Task[]>("tasks", todayTasks);
   const [filter, setFilter] = useState<"all" | "pending" | "done">("all");
   const [editingId, setEditingId] = useState<string | "new" | null>(null);
   const [form, setForm] = useState<TaskForm>(emptyForm());

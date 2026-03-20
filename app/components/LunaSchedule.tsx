@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { lunaFeeder as initialLunaFeeder } from "../lib/mockData";
+import { useLocalStorage } from "../lib/useLocalStorage";
 import { Cat, Pencil, X } from "lucide-react";
 
 const DAYS_SV = [
@@ -21,7 +22,7 @@ function getTodayName(): string {
 
 export default function LunaSchedule() {
   const todayName = getTodayName();
-  const [lunaFeeder, setLunaFeeder] = useState<Record<string, string>>(initialLunaFeeder);
+  const [lunaFeeder, setLunaFeeder] = useLocalStorage<Record<string, string>>("lunaFeeder", initialLunaFeeder);
   const [lunaModal, setLunaModal] = useState(false);
   const [lunaForm, setLunaForm] = useState<Record<string, string>>(initialLunaFeeder);
 
