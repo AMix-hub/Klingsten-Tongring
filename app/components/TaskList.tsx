@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { todayTasks, familyMembers, type Task } from "@/lib/mockData";
+import { todayTasks, familyMembers, type Task } from "../lib/mockData";
 import { CheckCircle2, Circle, Clock, AlertCircle } from "lucide-react";
 
 const categoryEmoji: Record<Task["category"], string> = {

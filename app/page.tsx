@@ -1,6 +1,6 @@
-import Dashboard from "@/components/Dashboard";
-import MemberCards from "@/components/MemberCard";
-import TaskList from "@/components/TaskList";
+import Dashboard from "./components/Dashboard";
+import MemberCards from "./components/MemberCard";
+import TaskList from "./components/TaskList";
 
 export default function Home() {
   return (
@@ -38,4 +38,3 @@ export default function Home() {
     </div>
   );
 }
-
