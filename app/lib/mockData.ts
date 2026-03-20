@@ -1,5 +1,19 @@
 export type MemberRole = "parent" | "child" | "pet";
 
+export const DAYS_SV = [
+  "Söndag",
+  "Måndag",
+  "Tisdag",
+  "Onsdag",
+  "Torsdag",
+  "Fredag",
+  "Lördag",
+] as const;
+
+export function getTodayName(): string {
+  return DAYS_SV[new Date().getDay()];
+}
+
 export interface FamilyMember {
   id: string;
   name: string;
@@ -8,6 +22,16 @@ export interface FamilyMember {
   color: string;
   responsibilities: string[];
   status: string;
+  points: number;
+}
+
+export interface RewardItem {
+  id: string;
+  title: string;
+  description: string;
+  cost: number;
+  emoji: string;
+  category: "activity" | "treat" | "privilege" | "other";
 }
 
 export interface Task {
@@ -50,6 +74,7 @@ export const familyMembers: FamilyMember[] = [
       "Ta hand om trädgården",
     ],
     status: "På jobbet",
+    points: 320,
   },
   {
     id: "amandah",
@@ -64,6 +89,7 @@ export const familyMembers: FamilyMember[] = [
       "Hjälpa med läxor",
     ],
     status: "Hemma",
+    points: 410,
   },
   {
     id: "maya",
@@ -77,6 +103,7 @@ export const familyMembers: FamilyMember[] = [
       "Mata Luna på tisdagar",
     ],
     status: "I skolan",
+    points: 185,
   },
   {
     id: "stina",
@@ -90,6 +117,7 @@ export const familyMembers: FamilyMember[] = [
       "Mata Luna på onsdagar",
     ],
     status: "I skolan",
+    points: 230,
   },
   {
     id: "castiel",
@@ -103,6 +131,7 @@ export const familyMembers: FamilyMember[] = [
       "Mata Luna på torsdagar",
     ],
     status: "I skolan",
+    points: 150,
   },
   {
     id: "tristan",
@@ -116,6 +145,7 @@ export const familyMembers: FamilyMember[] = [
       "Mata Luna på fredagar",
     ],
     status: "I skolan",
+    points: 195,
   },
   {
     id: "luna",
@@ -129,6 +159,74 @@ export const familyMembers: FamilyMember[] = [
       "Veterinärkontroll var 6:e månad",
     ],
     status: "Sover 😴",
+    points: 0,
+  },
+];
+
+export const rewardItems: RewardItem[] = [
+  {
+    id: "rw1",
+    title: "Bio-kväll",
+    description: "Välj en film och titta med familjen på fredag kväll.",
+    cost: 100,
+    emoji: "🎬",
+    category: "activity",
+  },
+  {
+    id: "rw2",
+    title: "Välj middagen",
+    description: "Bestäm vad hela familjen äter en valfri dag.",
+    cost: 75,
+    emoji: "🍕",
+    category: "treat",
+  },
+  {
+    id: "rw3",
+    title: "Slipp en diskning",
+    description: "Slippa diska en gång – någon annan tar din tur.",
+    cost: 50,
+    emoji: "🧹",
+    category: "privilege",
+  },
+  {
+    id: "rw4",
+    title: "Godisdag",
+    description: "En extra godisdag utöver fredagsgodis.",
+    cost: 60,
+    emoji: "🍬",
+    category: "treat",
+  },
+  {
+    id: "rw5",
+    title: "Utflykt till lekplatsen",
+    description: "En timme på favoritlekplatsen med mamma eller pappa.",
+    cost: 80,
+    emoji: "🛝",
+    category: "activity",
+  },
+  {
+    id: "rw6",
+    title: "Sova länge på helgen",
+    description: "Slipp morgonrutinerna en lördag eller söndag.",
+    cost: 40,
+    emoji: "😴",
+    category: "privilege",
+  },
+  {
+    id: "rw7",
+    title: "Ny bok eller spel",
+    description: "Välj en ny bok, brädspel eller mobilspel (max 150 kr).",
+    cost: 150,
+    emoji: "🎮",
+    category: "treat",
+  },
+  {
+    id: "rw8",
+    title: "Matlagningskväll",
+    description: "Laga din favoriträtt tillsammans med mamma eller pappa.",
+    cost: 90,
+    emoji: "👨‍🍳",
+    category: "activity",
   },
 ];
 

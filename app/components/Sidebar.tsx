@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -12,24 +14,32 @@ import {
   Cat,
   Menu,
   X,
+  Gift,
 } from "lucide-react";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "#dashboard" },
-  { icon: Users, label: "Familjen", href: "#members" },
-  { icon: CheckSquare, label: "Uppgifter", href: "#tasks" },
-  { icon: UtensilsCrossed, label: "Matlista", href: "#meals" },
-  { icon: Bell, label: "Påminnelser", href: "#reminders" },
-  { icon: Cat, label: "Luna", href: "#luna" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/" },
+  { icon: Users, label: "Familjen", href: "/familjen" },
+  { icon: CheckSquare, label: "Uppgifter", href: "/uppgifter" },
+  { icon: UtensilsCrossed, label: "Matlista", href: "/matlista" },
+  { icon: Bell, label: "Påminnelser", href: "/paminnelser" },
+  { icon: Cat, label: "Luna", href: "/luna" },
+  { icon: Gift, label: "Belöningar", href: "/beloningar" },
 ];
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   const closeMobile = () => setMobileOpen(false);
   // On mobile the drawer is always full-width, so always show labels
   const showLabel = !collapsed || mobileOpen;
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   return (
     <>
@@ -109,23 +119,37 @@ export default function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex-1 p-2 space-y-1 mt-2 overflow-y-auto" aria-label="Huvudnavigering">
-          {navItems.map(({ icon: Icon, label, href }) => (
-            <a
-              key={href}
-              href={href}
-              onClick={closeMobile}
-              title={showLabel ? undefined : label}
-              aria-label={label}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-indigo-500/10 hover:border-indigo-500/20 border border-transparent transition-all duration-200 group ${showLabel ? "" : "justify-center"}`}
-            >
-              <Icon className="w-5 h-5 flex-shrink-0 group-hover:text-indigo-400 transition-colors" />
-              {showLabel && (
-                <span className="text-sm font-medium whitespace-nowrap">
-                  {label}
-                </span>
-              )}
-            </a>
-          ))}
+          {navItems.map(({ icon: Icon, label, href }) => {
+            const active = isActive(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={closeMobile}
+                title={showLabel ? undefined : label}
+                aria-label={label}
+                aria-current={active ? "page" : undefined}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all duration-200 group ${
+                  showLabel ? "" : "justify-center"
+                } ${
+                  active
+                    ? "bg-indigo-500/20 border-indigo-500/30 text-white"
+                    : "text-slate-400 hover:text-white hover:bg-indigo-500/10 hover:border-indigo-500/20 border-transparent"
+                }`}
+              >
+                <Icon
+                  className={`w-5 h-5 flex-shrink-0 transition-colors ${
+                    active ? "text-indigo-400" : "group-hover:text-indigo-400"
+                  }`}
+                />
+                {showLabel && (
+                  <span className="text-sm font-medium whitespace-nowrap">
+                    {label}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Collapse toggle – desktop only */}
