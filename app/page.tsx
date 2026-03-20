@@ -26,7 +26,7 @@ export default function Home() {
 
       {/* Family members */}
       <section id="members">
-        <MemberCards />
+        <MemberCard />
       </section>
 
       {/* Task list */}
