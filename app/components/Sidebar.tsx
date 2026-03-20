@@ -28,6 +28,8 @@ export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = () => setMobileOpen(false);
+  // On mobile the drawer is always full-width, so always show labels
+  const showLabel = !collapsed || mobileOpen;
 
   return (
     <>
@@ -85,7 +87,7 @@ export default function Sidebar() {
         {/* Logo */}
         <div className="flex items-center gap-3 px-4 py-5 border-b border-slate-800/60">
           <span className="text-2xl flex-shrink-0">🏠</span>
-          {!collapsed && (
+          {showLabel && (
             <div className="flex-1">
               <p className="font-bold text-white text-sm leading-tight">
                 Klingsten
@@ -112,12 +114,12 @@ export default function Sidebar() {
               key={href}
               href={href}
               onClick={closeMobile}
-              title={collapsed ? label : undefined}
+              title={showLabel ? undefined : label}
               aria-label={label}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-indigo-500/10 hover:border-indigo-500/20 border border-transparent transition-all duration-200 group ${collapsed ? "justify-center" : ""}`}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-indigo-500/10 hover:border-indigo-500/20 border border-transparent transition-all duration-200 group ${showLabel ? "" : "justify-center"}`}
             >
               <Icon className="w-5 h-5 flex-shrink-0 group-hover:text-indigo-400 transition-colors" />
-              {!collapsed && (
+              {showLabel && (
                 <span className="text-sm font-medium whitespace-nowrap">
                   {label}
                 </span>
