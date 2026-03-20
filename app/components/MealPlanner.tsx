@@ -8,6 +8,7 @@ import {
   getTodayName,
   type MealPlan,
 } from "../lib/mockData";
+import { useLocalStorage } from "../lib/useLocalStorage";
 import { ChefHat, Pencil, X } from "lucide-react";
 
 function getMemberName(id: string): string {
@@ -17,7 +18,7 @@ function getMemberName(id: string): string {
 
 export default function MealPlanner() {
   const todayName = getTodayName();
-  const [meals, setMeals] = useState<MealPlan[]>(initialMealPlan);
+  const [meals, setMeals] = useLocalStorage<MealPlan[]>("mealPlan", initialMealPlan);
   const [mealModal, setMealModal] = useState<MealPlan | null>(null);
   const [mealForm, setMealForm] = useState<MealPlan | null>(null);
 
