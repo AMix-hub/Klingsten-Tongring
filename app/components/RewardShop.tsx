@@ -6,7 +6,8 @@ import {
   rewardItems,
   type RewardItem,
 } from "../lib/mockData";
-import { Gift, Star, Trophy, X, CheckCircle } from "lucide-react";
+import { useCloudData } from "../lib/useCloudData";
+import { Gift, Star, Trophy, X, CheckCircle, RotateCcw } from "lucide-react";
 
 const categoryLabels: Record<RewardItem["category"], string> = {
   activity: "Aktivitet",
@@ -22,14 +23,19 @@ const categoryColors: Record<RewardItem["category"], string> = {
   other: "bg-slate-500/20 text-slate-300 border-slate-500/30",
 };
 
-export default function RewardShop() {
-  const humanMembers = familyMembers.filter((m) => m.role !== "pet");
+const humanMembers = familyMembers.filter((m) => m.role !== "pet");
+const initialPoints: Record<string, number> = Object.fromEntries(
+  humanMembers.map((m) => [m.id, m.points])
+);
 
-  const [points, setPoints] = useState<Record<string, number>>(
-    Object.fromEntries(humanMembers.map((m) => [m.id, m.points]))
+export default function RewardShop() {
+  const [points, setPoints] = useCloudData<Record<string, number>>(
+    "points",
+    initialPoints
   );
   const [selectedMember, setSelectedMember] = useState(humanMembers[0]?.id ?? "");
   const [confirmItem, setConfirmItem] = useState<RewardItem | null>(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [redeemed, setRedeemed] = useState<string | null>(null);
 
   const currentPoints = points[selectedMember] ?? 0;
@@ -51,6 +57,11 @@ export default function RewardShop() {
     setTimeout(() => setRedeemed(null), 3000);
   };
 
+  const resetAllPoints = () => {
+    setPoints(initialPoints);
+    setShowResetConfirm(false);
+  };
+
   return (
     <div className="space-y-6">
       {/* Success toast */}
@@ -67,7 +78,15 @@ export default function RewardShop() {
       <div className="rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/60 to-slate-900/60 backdrop-blur-sm p-5">
         <div className="flex items-center gap-2 mb-4">
           <Trophy className="w-5 h-5 text-indigo-400" />
-          <h3 className="font-semibold text-white">Välj familjemedlem</h3>
+          <h3 className="font-semibold text-white flex-1">Välj familjemedlem</h3>
+          <button
+            onClick={() => setShowResetConfirm(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-sm font-medium transition-colors border border-rose-500/30"
+            title="Nolla alla poäng"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            Nolla alla poäng
+          </button>
         </div>
 
         {/* Member buttons */}
@@ -208,7 +227,46 @@ export default function RewardShop() {
         </div>
       </div>
 
-      {/* Confirm modal */}
+      {/* Reset all points confirm modal */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-slate-900 rounded-2xl p-6 w-full max-w-sm border border-slate-700 shadow-2xl">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-semibold text-white text-lg flex items-center gap-2">
+                <RotateCcw className="w-5 h-5 text-rose-400" />
+                Nolla alla poäng
+              </h3>
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+                aria-label="Stäng"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-sm text-slate-400 mb-6">
+              Är du säker? Alla familjemedlemmars poäng återställs till sina
+              startpoäng. Det här påverkar <span className="text-white font-medium">alla enheter</span> direkt.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="flex-1 px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white text-sm font-medium transition-colors"
+              >
+                Avbryt
+              </button>
+              <button
+                onClick={resetAllPoints}
+                className="flex-1 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-medium transition-colors"
+              >
+                Ja, nolla! 🔄
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Redeem confirm modal */}
       {confirmItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
           <div className="bg-slate-900 rounded-2xl p-6 w-full max-w-sm border border-slate-700 shadow-2xl">

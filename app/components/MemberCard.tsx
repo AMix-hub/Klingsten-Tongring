@@ -7,7 +7,7 @@ import {
   badgeColorMap,
   type FamilyMember,
 } from "../lib/mockData";
-import { useLocalStorage } from "../lib/useLocalStorage";
+import { useCloudData } from "../lib/useCloudData";
 import { Pencil, X, Plus, Trash2 } from "lucide-react";
 
 type MemberForm = Pick<FamilyMember, "name" | "emoji" | "status" | "responsibilities">;
@@ -83,7 +83,7 @@ function MemberCard({
 }
 
 export default function MemberCards() {
-  const [members, setMembers] = useLocalStorage<FamilyMember[]>("familyMembers", initialMembers);
+  const [members, setMembers] = useCloudData<FamilyMember[]>("familyMembers", initialMembers);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<MemberForm>({ name: "", emoji: "", status: "", responsibilities: [] });
 
