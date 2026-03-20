@@ -1,5 +1,7 @@
 import MemberCard from "../components/MemberCard";
 
+export const dynamic = "force-dynamic";
+
 export default function FamiljenPage() {
   return (
     <div className="p-6 space-y-6 min-h-screen">

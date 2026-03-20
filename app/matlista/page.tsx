@@ -1,5 +1,7 @@
 import MealPlanner from "../components/MealPlanner";
 
+export const dynamic = "force-dynamic";
+
 export default function MatlistaPage() {
   return (
     <div className="p-6 space-y-6 min-h-screen">
