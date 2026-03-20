@@ -1,5 +1,7 @@
 import RemindersPanel from "../components/RemindersPanel";
 
+export const dynamic = "force-dynamic";
+
 export default function PaminnelserPage() {
   return (
     <div className="p-6 space-y-6 min-h-screen">

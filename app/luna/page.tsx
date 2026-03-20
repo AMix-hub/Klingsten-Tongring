@@ -1,5 +1,7 @@
 import LunaSchedule from "../components/LunaSchedule";
 
+export const dynamic = "force-dynamic";
+
 export default function LunaPage() {
   return (
     <div className="p-6 space-y-6 min-h-screen">

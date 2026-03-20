@@ -1,5 +1,7 @@
 import RewardShop from "../components/RewardShop";
 
+export const dynamic = "force-dynamic";
+
 export default function BeloningarPage() {
   return (
     <div className="p-6 space-y-6 min-h-screen">
