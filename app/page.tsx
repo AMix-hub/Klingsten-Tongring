@@ -31,9 +31,7 @@ export default function Home() {
 
       {/* Task list */}
       <section id="tasks">
-        <div className="max-w-2xl">
-          <TaskList />
-        </div>
+        <TaskList />
       </section>
     </div>
   );

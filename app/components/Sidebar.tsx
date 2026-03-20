@@ -24,7 +24,7 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = () => setMobileOpen(false);
@@ -112,7 +112,9 @@ export default function Sidebar() {
               key={href}
               href={href}
               onClick={closeMobile}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-indigo-500/10 hover:border-indigo-500/20 border border-transparent transition-all duration-200 group"
+              title={collapsed ? label : undefined}
+              aria-label={label}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-indigo-500/10 hover:border-indigo-500/20 border border-transparent transition-all duration-200 group ${collapsed ? "justify-center" : ""}`}
             >
               <Icon className="w-5 h-5 flex-shrink-0 group-hover:text-indigo-400 transition-colors" />
               {!collapsed && (
