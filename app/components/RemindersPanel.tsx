@@ -6,7 +6,7 @@ import {
   familyMembers,
   type Reminder,
 } from "../lib/mockData";
-import { useLocalStorage } from "../lib/useLocalStorage";
+import { useCloudData } from "../lib/useCloudData";
 import { Bell, Plus, Pencil, Trash2, X } from "lucide-react";
 
 function getMemberName(id: string): string {
@@ -26,7 +26,7 @@ function emptyReminder(): ReminderForm {
 }
 
 export default function RemindersPanel() {
-  const [reminders, setReminders] = useLocalStorage<Reminder[]>("reminders", initialReminders);
+  const [reminders, setReminders] = useCloudData<Reminder[]>("reminders", initialReminders);
   const [reminderModal, setReminderModal] = useState<string | "new" | null>(null);
   const [reminderForm, setReminderForm] = useState<ReminderForm>(emptyReminder());
 
