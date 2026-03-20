@@ -1,5 +1,5 @@
 import Dashboard from "./components/Dashboard";
-import MemberCards from "./components/MemberCard";
+import MemberCard from "./components/MemberCard";
 import TaskList from "./components/TaskList";
 
 export default function Home() {
