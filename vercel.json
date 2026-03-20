@@ -1,7 +1,1 @@
-{
-  "build": {
-    "env": {
-      "NEXT_ENABLE_ADAPTER": "1"
-    }
-  }
-}
+{}
