@@ -8,9 +8,12 @@ import {
   familyMembers,
   type MealPlan,
   type Reminder,
+  type CalendarEvent,
+  parseDateStr,
 } from "../lib/mockData";
 import { useCloudData } from "../lib/useCloudData";
-import { Bell, ChefHat, Cat, Calendar, Plus, Pencil, Trash2, X } from "lucide-react";
+import { Bell, ChefHat, Cat, Calendar, CalendarDays, Plus, Pencil, Trash2, X } from "lucide-react";
+import Link from "next/link";
 
 const DAYS_SV = [
   "Söndag",
@@ -31,6 +34,31 @@ function getMemberName(id: string): string {
   return m ? m.name : id;
 }
 
+/** Format a local Date as "YYYY-MM-DD" without UTC conversion issues. */
+function toLocalDateStr(d: Date): string {
+  const y = d.getFullYear();
+  const mo = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${mo}-${day}`;
+}
+
+/** Returns [mondayStr, sundayStr] for the current week (Mon–Sun). */
+function getCurrentWeekRange(): [string, string] {
+  const today = new Date();
+  const dow = (today.getDay() + 6) % 7; // Mon=0 … Sun=6
+  const monday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - dow
+  );
+  const sunday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - dow + 6
+  );
+  return [toLocalDateStr(monday), toLocalDateStr(sunday)];
+}
+
 type ReminderForm = Omit<Reminder, "id">;
 
 function emptyReminder(): ReminderForm {
@@ -48,6 +76,13 @@ export default function Dashboard() {
   const [meals, setMeals] = useCloudData<MealPlan[]>("mealPlan", initialMealPlan);
   const [reminders, setReminders] = useCloudData<Reminder[]>("reminders", initialReminders);
   const [lunaFeeder, setLunaFeeder] = useCloudData<Record<string, string>>("lunaFeeder", initialLunaFeeder);
+  const [calendarEvents] = useCloudData<CalendarEvent[]>("calendarEvents", []);
+
+  // This week's calendar events (Mon–Sun)
+  const [weekStart, weekEnd] = getCurrentWeekRange();
+  const weekEvents = calendarEvents
+    .filter((e) => e.date >= weekStart && e.date <= weekEnd)
+    .sort((a, b) => a.date.localeCompare(b.date));
 
   // Reminder modal state
   const [reminderModal, setReminderModal] = useState<string | "new" | null>(null);
@@ -215,6 +250,73 @@ export default function Dashboard() {
           </div>
         ) : (
           <p className="text-slate-500 text-sm">Ingen meny planerad idag.</p>
+        )}
+      </div>
+
+      {/* Weekly calendar events */}
+      <div className="md:col-span-2 xl:col-span-3 rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/30 to-slate-900/60 backdrop-blur-sm p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <CalendarDays className="w-5 h-5 text-indigo-400" />
+          <h3 className="font-semibold text-white flex-1">Veckans händelser</h3>
+          <Link
+            href="/kalender"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 text-sm font-medium transition-colors border border-indigo-500/30"
+          >
+            <Calendar className="w-3.5 h-3.5" />
+            Kalender
+          </Link>
+        </div>
+        {weekEvents.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {weekEvents.map((ev) => {
+              const d = parseDateStr(ev.date);
+              const isToday = ev.date === toLocalDateStr(new Date());
+              return (
+                <div
+                  key={ev.id}
+                  className={`rounded-xl p-3 border ${
+                    isToday
+                      ? "bg-indigo-500/15 border-indigo-500/40"
+                      : "bg-slate-800/50 border-slate-700/50"
+                  }`}
+                >
+                  <p className="text-xs text-slate-500 capitalize mb-1">
+                    {d.toLocaleDateString("sv-SE", {
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                    })}
+                    {isToday && (
+                      <span className="ml-1.5 text-indigo-400 font-medium">
+                        · Idag
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-sm font-medium text-slate-200">
+                    {ev.title}
+                  </p>
+                  {ev.assignedTo && (
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {getMemberName(ev.assignedTo)}
+                    </p>
+                  )}
+                  {ev.description && (
+                    <p className="text-xs text-slate-500 mt-0.5 truncate">
+                      {ev.description}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-500">
+            Inga händelser planerade den här veckan.{" "}
+            <Link href="/kalender" className="text-indigo-400 hover:underline">
+              Gå till kalendern
+            </Link>{" "}
+            för att lägga till.
+          </p>
         )}
       </div>
 

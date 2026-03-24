@@ -60,6 +60,22 @@ export interface Reminder {
   urgent: boolean;
 }
 
+export interface CalendarEvent {
+  id: string;
+  date: string; // "YYYY-MM-DD"
+  title: string;
+  assignedTo?: string;
+  description?: string;
+}
+
+/**
+ * Parses a "YYYY-MM-DD" date string into a local Date at noon to avoid
+ * UTC-offset issues that would otherwise shift the date by one day.
+ */
+export function parseDateStr(dateStr: string): Date {
+  return new Date(dateStr + "T12:00:00");
+}
+
 export const familyMembers: FamilyMember[] = [
   {
     id: "mats",

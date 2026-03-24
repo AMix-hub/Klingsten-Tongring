@@ -15,10 +15,12 @@ import {
   Menu,
   X,
   Gift,
+  CalendarDays,
 } from "lucide-react";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
+  { icon: CalendarDays, label: "Kalender", href: "/kalender" },
   { icon: Users, label: "Familjen", href: "/familjen" },
   { icon: CheckSquare, label: "Uppgifter", href: "/uppgifter" },
   { icon: UtensilsCrossed, label: "Matlista", href: "/matlista" },
