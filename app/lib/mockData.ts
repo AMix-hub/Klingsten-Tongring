@@ -74,7 +74,7 @@ export const familyMembers: FamilyMember[] = [
       "Ta hand om trädgården",
     ],
     status: "På jobbet",
-    points: 320,
+    points: 0,
   },
   {
     id: "amandah",
@@ -89,7 +89,7 @@ export const familyMembers: FamilyMember[] = [
       "Hjälpa med läxor",
     ],
     status: "Hemma",
-    points: 410,
+    points: 0,
   },
   {
     id: "maya",
@@ -103,7 +103,7 @@ export const familyMembers: FamilyMember[] = [
       "Mata Luna på tisdagar",
     ],
     status: "I skolan",
-    points: 185,
+    points: 0,
   },
   {
     id: "stina",
@@ -117,7 +117,7 @@ export const familyMembers: FamilyMember[] = [
       "Mata Luna på onsdagar",
     ],
     status: "I skolan",
-    points: 230,
+    points: 0,
   },
   {
     id: "castiel",
@@ -131,7 +131,7 @@ export const familyMembers: FamilyMember[] = [
       "Mata Luna på torsdagar",
     ],
     status: "I skolan",
-    points: 150,
+    points: 0,
   },
   {
     id: "tristan",
@@ -145,7 +145,7 @@ export const familyMembers: FamilyMember[] = [
       "Mata Luna på fredagar",
     ],
     status: "I skolan",
-    points: 195,
+    points: 0,
   },
   {
     id: "luna",
