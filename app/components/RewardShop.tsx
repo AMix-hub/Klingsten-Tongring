@@ -3,11 +3,23 @@
 import { useState } from "react";
 import {
   familyMembers,
-  rewardItems,
+  rewardItems as defaultRewardItems,
   type RewardItem,
 } from "../lib/mockData";
 import { useCloudData } from "../lib/useCloudData";
-import { Gift, Star, Trophy, X, CheckCircle, RotateCcw } from "lucide-react";
+import { Gift, Star, Trophy, X, CheckCircle, RotateCcw, Plus, Pencil, Trash2 } from "lucide-react";
+
+type RewardForm = Omit<RewardItem, "id">;
+
+function emptyRewardForm(): RewardForm {
+  return {
+    title: "",
+    description: "",
+    cost: 50,
+    emoji: "🎁",
+    category: "other",
+  };
+}
 
 const categoryLabels: Record<RewardItem["category"], string> = {
   activity: "Aktivitet",
@@ -33,10 +45,54 @@ export default function RewardShop() {
     "points",
     initialPoints
   );
+  const [rewardItems, setRewardItems] = useCloudData<RewardItem[]>(
+    "rewardItems",
+    defaultRewardItems
+  );
   const [selectedMember, setSelectedMember] = useState(humanMembers[0]?.id ?? "");
   const [confirmItem, setConfirmItem] = useState<RewardItem | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [redeemed, setRedeemed] = useState<string | null>(null);
+  const [editingRewardId, setEditingRewardId] = useState<string | "new" | null>(null);
+  const [rewardForm, setRewardForm] = useState<RewardForm>(emptyRewardForm());
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  const openAddReward = () => {
+    setRewardForm(emptyRewardForm());
+    setEditingRewardId("new");
+  };
+
+  const openEditReward = (item: RewardItem) => {
+    setRewardForm({
+      title: item.title,
+      description: item.description,
+      cost: item.cost,
+      emoji: item.emoji,
+      category: item.category,
+    });
+    setEditingRewardId(item.id);
+  };
+
+  const closeRewardModal = () => setEditingRewardId(null);
+
+  const saveReward = () => {
+    if (!rewardForm.title.trim()) return;
+    const cost = Math.max(1, rewardForm.cost || 1);
+    if (editingRewardId === "new") {
+      const newItem: RewardItem = { ...rewardForm, cost, id: `rw${crypto.randomUUID()}` };
+      setRewardItems((prev) => [...prev, newItem]);
+    } else if (editingRewardId) {
+      setRewardItems((prev) =>
+        prev.map((r) => (r.id === editingRewardId ? { ...rewardForm, cost, id: r.id } : r))
+      );
+    }
+    closeRewardModal();
+  };
+
+  const deleteReward = (id: string) => {
+    setRewardItems((prev) => prev.filter((r) => r.id !== id));
+    setDeleteConfirmId(null);
+  };
 
   const currentPoints = points[selectedMember] ?? 0;
   const member = humanMembers.find((m) => m.id === selectedMember);
@@ -170,10 +226,17 @@ export default function RewardShop() {
       <div className="rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-950/20 to-slate-900/60 backdrop-blur-sm p-5">
         <div className="flex items-center gap-2 mb-4">
           <Gift className="w-5 h-5 text-purple-400" />
-          <h3 className="font-semibold text-white">Belöningsbutik</h3>
-          <span className="ml-auto text-xs text-slate-500">
+          <h3 className="font-semibold text-white flex-1">Belöningsbutik</h3>
+          <span className="text-xs text-slate-500 mr-2">
             Du har <span className="text-indigo-300 font-bold">{currentPoints}</span> poäng
           </span>
+          <button
+            onClick={openAddReward}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 text-sm font-medium transition-colors border border-purple-500/30"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Lägg till
+          </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -190,13 +253,29 @@ export default function RewardShop() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <span className="text-2xl">{item.emoji}</span>
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full border ${
-                      categoryColors[item.category]
-                    }`}
-                  >
-                    {categoryLabels[item.category]}
-                  </span>
+                  <div className="flex items-center gap-1 ml-auto">
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full border ${
+                        categoryColors[item.category]
+                      }`}
+                    >
+                      {categoryLabels[item.category]}
+                    </span>
+                    <button
+                      onClick={() => openEditReward(item)}
+                      className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-all"
+                      aria-label="Redigera belöning"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmId(item.id)}
+                      className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+                      aria-label="Ta bort belöning"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-white">{item.title}</p>
@@ -309,6 +388,161 @@ export default function RewardShop() {
                 className="flex-1 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium transition-colors"
               >
                 Lös in! 🎉
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add/Edit reward modal */}
+      {editingRewardId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-slate-900 rounded-2xl p-6 w-full max-w-md border border-slate-700 shadow-2xl">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-semibold text-white text-lg flex items-center gap-2">
+                <Gift className="w-5 h-5 text-purple-400" />
+                {editingRewardId === "new" ? "Lägg till belöning" : "Redigera belöning"}
+              </h3>
+              <button
+                onClick={closeRewardModal}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+                aria-label="Stäng"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Emoji + Title */}
+              <div className="flex gap-3">
+                <div className="w-20">
+                  <label className="block text-xs text-slate-400 mb-1">Emoji</label>
+                  <input
+                    type="text"
+                    value={rewardForm.emoji}
+                    onChange={(e) => setRewardForm((f) => ({ ...f, emoji: e.target.value }))}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-center text-xl focus:outline-none focus:border-purple-500/50"
+                    maxLength={12}
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs text-slate-400 mb-1">Namn *</label>
+                  <input
+                    type="text"
+                    value={rewardForm.title}
+                    onChange={(e) => setRewardForm((f) => ({ ...f, title: e.target.value }))}
+                    placeholder="T.ex. Bio-kväll"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-purple-500/50"
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Beskrivning</label>
+                <textarea
+                  value={rewardForm.description}
+                  onChange={(e) => setRewardForm((f) => ({ ...f, description: e.target.value }))}
+                  placeholder="Beskriv belöningen..."
+                  rows={2}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-purple-500/50 resize-none"
+                />
+              </div>
+
+              {/* Cost + Category */}
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="block text-xs text-slate-400 mb-1">Kostnad (poäng)</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={rewardForm.cost || ""}
+                    onChange={(e) =>
+                      setRewardForm((f) => ({ ...f, cost: parseInt(e.target.value) || 0 }))
+                    }
+                    onBlur={() =>
+                      setRewardForm((f) => ({ ...f, cost: Math.max(1, f.cost || 1) }))
+                    }
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500/50"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs text-slate-400 mb-1">Kategori</label>
+                  <select
+                    value={rewardForm.category}
+                    onChange={(e) =>
+                      setRewardForm((f) => ({
+                        ...f,
+                        category: e.target.value as RewardItem["category"],
+                      }))
+                    }
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500/50"
+                  >
+                    {(Object.keys(categoryLabels) as RewardItem["category"][]).map((cat) => (
+                      <option key={cat} value={cat}>
+                        {categoryLabels[cat]}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={closeRewardModal}
+                className="flex-1 px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white text-sm font-medium transition-colors"
+              >
+                Avbryt
+              </button>
+              <button
+                onClick={saveReward}
+                disabled={!rewardForm.title.trim()}
+                className="flex-1 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
+              >
+                {editingRewardId === "new" ? "Lägg till" : "Spara"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete reward confirm modal */}
+      {deleteConfirmId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-slate-900 rounded-2xl p-6 w-full max-w-sm border border-slate-700 shadow-2xl">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-semibold text-white text-lg flex items-center gap-2">
+                <Trash2 className="w-5 h-5 text-rose-400" />
+                Ta bort belöning
+              </h3>
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+                aria-label="Stäng"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-sm text-slate-400 mb-6">
+              Är du säker på att du vill ta bort belöningen{" "}
+              <span className="text-white font-medium">
+                {rewardItems.find((r) => r.id === deleteConfirmId)?.title}
+              </span>
+              ?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="flex-1 px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white text-sm font-medium transition-colors"
+              >
+                Avbryt
+              </button>
+              <button
+                onClick={() => deleteReward(deleteConfirmId)}
+                className="flex-1 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-medium transition-colors"
+              >
+                Ta bort
               </button>
             </div>
           </div>
