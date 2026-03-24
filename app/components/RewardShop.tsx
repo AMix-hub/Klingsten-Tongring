@@ -58,7 +58,7 @@ export default function RewardShop() {
   };
 
   const resetAllPoints = () => {
-    setPoints(initialPoints);
+    setPoints(Object.fromEntries(humanMembers.map((m) => [m.id, 0])));
     setShowResetConfirm(false);
   };
 
